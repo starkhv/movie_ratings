@@ -8,7 +8,7 @@ def read_mat(file_name='ex8_movies.mat'):
     temp = scipy.io.loadmat(file_name)
     return (temp['Y'], temp['R'])
 
-def cost_grad(X, Theta, Y, R, lambd):
+def cost_grad(X, Theta, Y, R, alpha, lambd):
     """
     Calculates the cost of the current parameters
     """
@@ -18,11 +18,12 @@ def cost_grad(X, Theta, Y, R, lambd):
     x_reg = lambd*np.sum(X**2, axis=(0,1))/2
     COST = squared_error + theta_reg + x_reg
 
-    X_grad = np.zeros(X.shape)
+    diff = np.dot(X, np.transpose(Theta))-Y
 
-    Theta_grad = np.zeros(Theta.shape)
+    X = X - alpha*(np.dot(diff, Theta)-X)
+    Theta = Theta - alpha*(np.dot(np.transpose(diff), X)-Theta)
 
-    return COST
+    return COST, X, Theta
 
 def rand_init(Y, num_features):
     """
